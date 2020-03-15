@@ -13,6 +13,8 @@ This is a tool used to modify Android Manifest binary file.
 本工具并不存在此问题。当然，可能会存在其他一些问题，并未作充分测试。
 
 此项目基于[axml](https://github.com/Sable/axml)，并在其基础做了二次封装和一些优化，使用起来更加方便。
+#  **Jar包下载**
+打开release页面下载，或[点击下载V1.0.1](https://github.com/WindySha/ManifestEditor/releases/download/v1.0.1/ManifestEditor-1.0.1.jar)
 
 # **查看帮助文档**
 ```
