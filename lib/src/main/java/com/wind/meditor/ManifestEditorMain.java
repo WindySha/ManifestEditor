@@ -68,6 +68,15 @@ public class ManifestEditorMain extends BaseCommand {
             ", multi option is supported", argName = "application-attribute-name-value")
     private List<String> applicationAttributeList = new ArrayList<>();
 
+    @Opt(opt = "md", longOpt = "metaData", description = "add the meta data, " +
+            " name and value should be separated by " + MULTI_NAME_SEPERATER +
+            ", multi option is supported", argName = "meta-data-name-value")
+    private List<String> metaDataList = new ArrayList<>();
+
+    @Opt(opt = "dmd", longOpt = "deleteMetaDataList", description = "delete the meta data name" +
+            ", multi option is supported", argName = "delete-meta-data-name")
+    private List<String> deleteMetaDataList = new ArrayList<>();
+
     public static void main(String... args) {
         new ManifestEditorMain().doMain(args);
     }
@@ -225,6 +234,18 @@ public class ManifestEditorMain extends BaseCommand {
                     property.addApplicationAttribute(new AttributeItem(nameValue[0].trim(), nameValue[1].trim()).setNamespace(null));
                 }
             }
+        }
+
+        for (String metaData : metaDataList) {
+            String[] nameValue = metaData.split(MULTI_NAME_SEPERATER);
+
+            if (nameValue.length == 2) {
+                property.addMetaData(new ModificationProperty.MetaData(nameValue[0], nameValue[1]));
+            }
+        }
+
+        for (String metaData : deleteMetaDataList) {
+            property.addDeleteMetaData(metaData);
         }
 
 //        property.addManifestAttribute(new AttributeItem(NodeValue.Manifest.PACKAGE, "wind.new.pkg.name111").setNamespace(null))

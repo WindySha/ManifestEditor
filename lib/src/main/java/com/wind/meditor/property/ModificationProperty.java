@@ -12,6 +12,7 @@ public class ModificationProperty {
     
     private List<String> usesPermissionList = new ArrayList<>();
     private List<MetaData> metaDataList = new ArrayList<>();
+    private List<MetaData> deleteMetaDataList = new ArrayList<>();
 
     private List<AttributeItem> applicationAttributeList = new ArrayList<>();
     private List<AttributeItem> manifestAttributeList = new ArrayList<>();
@@ -49,6 +50,15 @@ public class ModificationProperty {
 
     public ModificationProperty addManifestAttribute(AttributeItem item) {
         manifestAttributeList.add(item);
+        return this;
+    }
+
+    public List<MetaData> getDeleteMetaDataList() {
+        return deleteMetaDataList;
+    }
+
+    public ModificationProperty addDeleteMetaData(String name) {
+        this.deleteMetaDataList.add(new MetaData(name, ""));
         return this;
     }
 

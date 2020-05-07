@@ -34,7 +34,7 @@ public class ManifestTagVisitor extends ModifyAttributeVisitor {
         NodeVisitor child = super.child(ns, name);
         if (NodeValue.Application.TAG_NAME.equals(name)) {
             return new ApplicationTagVisitor(child, properties.getApplicationAttributeList(),
-                    properties.getMetaDataList());
+                    properties.getMetaDataList(), properties.getDeleteMetaDataList());
         }
 
         if (NodeValue.UsesPermission.TAG_NAME.equals(name)) {
