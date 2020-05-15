@@ -140,9 +140,9 @@ $ java -jar ../ManifestEditor.jar ../AndroidManifest.xml -md xposedminversion:53
             android:name="xposedmodule"
             android:value="true" />
 ```
-### 9. Manifest文件中的删除MetaData标签: `-dmd`
+### 10. Manifest文件中的删除MetaData标签: `-dmd`
 ```
-$ java -jar ../ManifestEditor.jar ../AndroidManifest.xml -dmd xposedminversion -md xposedmodule
+$ java -jar ../ManifestEditor.jar ../AndroidManifest.xml -dmd xposedminversion -dmd xposedmodule
 ```
 如此，文件中，meta-data里的name为xposedminversion和xposedmodule的标签会被清空：
 ```
