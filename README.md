@@ -14,7 +14,7 @@ This is a tool used to modify Android Manifest binary file.
 
 This tool is used in project [Xpatch](https://github.com/WindySha/Xpatch)
 #  **Jar包下载**
-打开release页面下载，或[点击下载V1.0.1](https://github.com/WindySha/ManifestEditor/releases/download/v1.0.1/ManifestEditor-1.0.1.jar)
+打开release页面下载，或[点击下载V1.0.2](https://github.com/WindySha/ManifestEditor/releases/download/v1.0.2/ManifestEditor-1.0.2.jar)
 
 # **查看帮助文档**
 ```
