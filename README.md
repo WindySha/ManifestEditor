@@ -3,14 +3,12 @@ This is a tool used to modify Android Manifest binary file.
 此工具用于修改AndroidManifest二进制文件。比如，更改Manifest文件中的app包名，版本号，更改或新增app入口Application的类名，更改或新增debuggable的属性，增加usesPermission标签，增加meta-data标签等。
 同时，为了更方便使用，提供了直接修改Apk包中的Manifest文件，并对修改后的Apk进行签名的功能。
 
-比较常见的修改AndroidManifest二进制文件的工具，大致有这些：
-1. [apkeditor](https://github.com/8enet/apkeditor)
-2. [AXMLEditor](https://github.com/fourbrother/AXMLEditor)
+比较常见的修改AndroidManifest二进制文件的工具，大致有:[apkeditor](https://github.com/8enet/apkeditor)和[AXMLEditor](https://github.com/fourbrother/AXMLEditor)
 
-但是，这些工具都有一个致命的问题: 新增属性无法被Android系统解析。  
+但是，这些工具都有一个相同的问题: 新增属性无法被Android系统解析出来。  
 比如，在application标签下增加debuggable=true属性，安装后的App并不是debuggable的。
 
-本工具并不存在此问题。当然，可能会存在其他一些问题，并未作充分测试。
+本工具并不存在此问题。当然，本工具可能存在其他一些问题，并未作充分测试。
 
 此项目基于[axml](https://github.com/Sable/axml)，并在其基础做了二次封装和一些优化，使用起来更加方便。
 
@@ -34,6 +32,9 @@ options:
                              set the app entry application name
  -d,--debuggable <0 or 1>    set 1 to make the app debuggable = true, set 0 to m
                              ake the app debuggable = false
+ -dmd,--deleteMetaDataList <delete-meta-data-name>
+                             delete the meta data name, multi option is supporte
+                             d
  -f,--force                  force overwrite
  -h,--help                   Print this help message
  -ma,--manifestAttribute <manifest-attribute-name-value>
@@ -41,6 +42,8 @@ options:
                              uld be separated by : , if name is in android names
                              pace, prefix "android-" should be set, multi option
                               is supported
+ -md,--metaData <meta-data-name-value>add the meta data,  name and value should be separa
+                             ted by :, multi option is supported
  -o,--output <output-file>   output modified xml or apk file, default is $source
                              _apk_dir/[file-name]-new.xml or [file-name]-new-uns
                              igned.apk
@@ -51,7 +54,7 @@ options:
                              le, multi option is supported
  -vc,--versionCode <new-version-code>set the app version code
  -vn,--versionName <new-version-name>set the app version name
-version: 1.0.0
+version: 1.0.2
 ```
 # **修改Manifest文件**
 ### 1. 修改Manifest中app包名: `-pkg`
@@ -124,6 +127,29 @@ $ java -jar ../ManifestEditor.jar ../AndroidManifest.xml -aa android-allowBackup
 $ java -jar ../ManifestEditor.jar ../AndroidManifest.xml -o ../new_androidmanifest.xml -d 1
 ```
 将debuggable改为true后的Manifest文件输出为`new_androidmanifest.xml`
+### 9. Manifest文件中的新增MetaData标签: `-md`
+```
+$ java -jar ../ManifestEditor.jar ../AndroidManifest.xml -md xposedminversion:53 -md xposedmodule:true
+```
+如此，文件中新增了一个Meta-data标签：
+```
+         <meta-data
+            android:name="xposedminversion"
+            android:value="53" />
+         <meta-data
+            android:name="xposedmodule"
+            android:value="true" />
+```
+### 9. Manifest文件中的删除MetaData标签: `-dmd`
+```
+$ java -jar ../ManifestEditor.jar ../AndroidManifest.xml -dmd xposedminversion -md xposedmodule
+```
+如此，文件中，meta-data里的name为xposedminversion和xposedmodule的标签会被清空：
+```
+         <meta-data />
+         <meta-data />
+```
+通过删除和新增两个操作可以实现对某个指定的`<meta-data/>`的修改。
 # **修改Apk中的Manifest文件**
 ```
 $ java -jar ../ManifestEditor.jar ../original.apk -o ../new_build_unsigned.apk -d 1
