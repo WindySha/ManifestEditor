@@ -1,5 +1,8 @@
 package com.wind.meditor.utils;
 
+import java.util.Arrays;
+import java.util.List;
+
 public final class NodeValue {
     private NodeValue(){}
 
@@ -63,6 +66,19 @@ public final class NodeValue {
         public static final String ENABLED="enabled";
         public static final String DESCRIPTION="description";
         public static final String PROCESS="process";
+
+        public static final class Component {
+            public static final String ACTIVITY = "activity";
+            public static final String SERVICE = "service";
+            public static final String PROVIDER = "provider";
+            public static final String RECEIVER = "receiver";
+
+
+            public static final List<String> TAG_NAMES = Arrays.asList(ACTIVITY, SERVICE, PROVIDER, RECEIVER);
+            public static final String NAME="name";
+            public static final String VALUE="value";
+            public static final String PERMISSION = "permission";
+        }
     }
 
 

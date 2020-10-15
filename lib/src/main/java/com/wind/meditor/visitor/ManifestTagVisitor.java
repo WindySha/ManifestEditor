@@ -28,17 +28,17 @@ public class ManifestTagVisitor extends ModifyAttributeVisitor {
 
         if (ns != null && (NodeValue.UsesPermission.TAG_NAME).equals(name)) {
             NodeVisitor child = super.child(null, NodeValue.UsesPermission.TAG_NAME);
-            return new UserPermissionTagVisitor(child, null, ns);
+            return new UserPermissionTagVisitor(child, null, ns, properties);
         }
 
         NodeVisitor child = super.child(ns, name);
         if (NodeValue.Application.TAG_NAME.equals(name)) {
-            return new ApplicationTagVisitor(child, properties.getApplicationAttributeList(),
+            return new ApplicationTagVisitor(child, properties, properties.getApplicationAttributeList(),
                     properties.getMetaDataList(), properties.getDeleteMetaDataList());
         }
 
         if (NodeValue.UsesPermission.TAG_NAME.equals(name)) {
-            return new UserPermissionTagVisitor(child, getUsesPermissionGetter(), null);
+            return new UserPermissionTagVisitor(child, getUsesPermissionGetter(), null, properties);
         }
         return child;
     }
@@ -47,6 +47,9 @@ public class ManifestTagVisitor extends ModifyAttributeVisitor {
     public void attr(String ns, String name, int resourceId, int type, Object obj) {
         Log.d(" ManifestTagVisitor attr  --> ns = " + ns + " name = " +
                 name + " resourceId=" + resourceId + " obj = " + obj);
+        if (NodeValue.Manifest.PACKAGE.equals(name) && type == TYPE_STRING) {
+            properties.setOriginPackageName((String) obj);
+        }
         super.attr(ns, name, resourceId, type, obj);
     }
 
