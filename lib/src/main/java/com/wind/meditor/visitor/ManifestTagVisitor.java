@@ -35,10 +35,10 @@ public class ManifestTagVisitor extends ModifyAttributeVisitor {
         if (NodeValue.Application.TAG_NAME.equals(name)) {
             return new ApplicationTagVisitor(child, properties, properties.getApplicationAttributeList(),
                     properties.getMetaDataList(), properties.getDeleteMetaDataList());
-        }
-
-        if (NodeValue.UsesPermission.TAG_NAME.equals(name)) {
+        } else if (NodeValue.UsesPermission.TAG_NAME.equals(name)) {
             return new UserPermissionTagVisitor(child, getUsesPermissionGetter(), null, properties);
+        } else if(NodeValue.Permission.TAG_NAME.equals(name)){
+            return new PermissionTagVisitor(child, properties);
         }
         return child;
     }

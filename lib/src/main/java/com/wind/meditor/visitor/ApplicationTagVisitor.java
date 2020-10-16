@@ -41,7 +41,8 @@ public class ApplicationTagVisitor extends ModifyAttributeVisitor {
             NodeVisitor nv = super.child(ns, name);
             return new DeleteMetaDataVisitor(nv, deleteMetaDataList);
         } else if (NodeValue.Application.Component.TAG_NAMES.contains(name)){
-            return new ComponentTagVisitor(name, properties);
+            NodeVisitor nv = super.child(ns, name);
+            return new ComponentTagVisitor(nv, name, properties);
         }
         return super.child(ns, name);
     }

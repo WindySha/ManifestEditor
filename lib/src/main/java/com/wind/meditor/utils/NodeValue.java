@@ -37,6 +37,9 @@ public final class NodeValue {
         public static final String NAME="name";
         public static final String MAX_SDK_VERSION="maxSdkVersion";
     }
+    public static final class Permission{
+        public static final String TAG_NAME = "permission";
+    }
 
     public static final class MetaData{
         public static final String TAG_NAME = "meta-data";
@@ -78,6 +81,9 @@ public final class NodeValue {
             public static final String NAME="name";
             public static final String VALUE="value";
             public static final String PERMISSION = "permission";
+            public static final String READ_PERMISSION = "readPermission";
+            public static final String WRITE_PERMISSION = "writePermission";
+            public static final String AUTHORITIES = "authorities";
         }
     }
 
