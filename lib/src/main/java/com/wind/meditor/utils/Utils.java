@@ -36,7 +36,7 @@ public class Utils {
         ByteArrayOutputStream bos = null;
         try {
             bos = new ByteArrayOutputStream();
-            byte[] b = new byte[1024];
+            byte[] b = new byte[1024*128];
             int n;
             while ((n = inputStream.read(b)) != -1) {
                 bos.write(b, 0, n);
