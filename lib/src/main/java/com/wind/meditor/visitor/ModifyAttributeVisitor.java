@@ -45,8 +45,9 @@ public class ModifyAttributeVisitor extends NodeVisitor {
                     continue;
                 }
 
-                if (Utils.isEqual(ns, attributeItem.getNamespace())
-                        && Utils.isEqual(name, attributeItem.getName())) {
+                if ((Utils.isEqual(ns, attributeItem.getNamespace())
+                        && Utils.isEqual(name, attributeItem.getName()))
+                        || (resourceId >= 0 && resourceId == attributeItem.getResourceId())) {
                     hasBeenAddedAttributeList.add(attributeItem);
                     newObj = attributeItem.getValue();
                     break;
