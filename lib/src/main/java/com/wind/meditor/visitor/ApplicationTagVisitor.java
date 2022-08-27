@@ -15,13 +15,15 @@ public class ApplicationTagVisitor extends ModifyAttributeVisitor {
     private List<ModificationProperty.MetaData> metaDataList;
     private List<ModificationProperty.MetaData> deleteMetaDataList;
     private ModificationProperty.MetaData curMetaData;
+    private ModificationProperty properties;
 
     private static final String META_DATA_FLAG = "meta_data_flag";
 
-    ApplicationTagVisitor(NodeVisitor nv, List<AttributeItem> modifyAttributeList,
+    ApplicationTagVisitor(NodeVisitor nv, ModificationProperty properties, List<AttributeItem> modifyAttributeList,
                           List<ModificationProperty.MetaData> metaDataList,
                           List<ModificationProperty.MetaData> deleteMetaDataList) {
         super(nv, modifyAttributeList);
+        this.properties = properties;
         this.metaDataList = metaDataList;
         this.deleteMetaDataList = deleteMetaDataList;
     }
@@ -38,6 +40,9 @@ public class ApplicationTagVisitor extends ModifyAttributeVisitor {
                 && deleteMetaDataList != null && !deleteMetaDataList.isEmpty()) {
             NodeVisitor nv = super.child(ns, name);
             return new DeleteMetaDataVisitor(nv, deleteMetaDataList);
+        } else if (NodeValue.Application.Component.TAG_NAMES.contains(name)){
+            NodeVisitor nv = super.child(ns, name);
+            return new ComponentTagVisitor(nv, name, properties);
         }
         return super.child(ns, name);
     }

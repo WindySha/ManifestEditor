@@ -1,5 +1,7 @@
 package com.wind.meditor.property;
 
+import com.wind.meditor.utils.NodeValue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +11,7 @@ import java.util.List;
  * @author windysha
  */
 public class ModificationProperty {
-    
+
     private List<String> usesPermissionList = new ArrayList<>();
     private List<MetaData> metaDataList = new ArrayList<>();
     private List<MetaData> deleteMetaDataList = new ArrayList<>();
@@ -20,10 +22,28 @@ public class ModificationProperty {
     public List<String> getUsesPermissionList() {
         return usesPermissionList;
     }
-
+    private String originPackageName;
     public ModificationProperty addUsesPermission(String permissionName) {
         usesPermissionList.add(permissionName);
         return this;
+    }
+    //打包后的包名
+    public String getModifyPackageName(){
+        for(int i = 0; i< manifestAttributeList.size(); i++){
+            AttributeItem attributeItem = manifestAttributeList.get(i);
+            if(NodeValue.Manifest.PACKAGE.equals(attributeItem.getName())){
+                return (String) attributeItem.getValue();
+            }
+        }
+        return originPackageName;
+    }
+
+    public String getOriginPackageName() {
+        return originPackageName;
+    }
+
+    public void setOriginPackageName(String packageName) {
+        this.originPackageName = packageName;
     }
 
     public List<AttributeItem> getApplicationAttributeList() {
