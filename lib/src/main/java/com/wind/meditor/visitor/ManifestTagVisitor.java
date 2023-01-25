@@ -37,6 +37,10 @@ public class ManifestTagVisitor extends ModifyAttributeVisitor {
                     properties.getMetaDataList(), properties.getDeleteMetaDataList());
         }
 
+        if (NodeValue.UsesSDK.TAG_NAME.equals(name)) {
+            return new ModifyAttributeVisitor(child, properties.getUsesSdkAttributeList());
+        }
+
         if (NodeValue.UsesPermission.TAG_NAME.equals(name)) {
             return new UserPermissionTagVisitor(child, getUsesPermissionGetter(), null);
         }
