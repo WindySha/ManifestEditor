@@ -16,6 +16,7 @@ public class ModificationProperty {
 
     private List<AttributeItem> applicationAttributeList = new ArrayList<>();
     private List<AttributeItem> manifestAttributeList = new ArrayList<>();
+    private List<AttributeItem> usesSdkAttributeList = new ArrayList<>();
 
     public List<String> getUsesPermissionList() {
         return usesPermissionList;
@@ -50,6 +51,15 @@ public class ModificationProperty {
 
     public ModificationProperty addManifestAttribute(AttributeItem item) {
         manifestAttributeList.add(item);
+        return this;
+    }
+
+    public List<AttributeItem> getUsesSdkAttributeList() {
+        return usesSdkAttributeList;
+    }
+
+    public ModificationProperty addUsesSdkAttribute(AttributeItem item) {
+        usesSdkAttributeList.add(item);
         return this;
     }
 

@@ -68,6 +68,12 @@ public class ManifestEditorMain extends BaseCommand {
             ", multi option is supported", argName = "application-attribute-name-value")
     private List<String> applicationAttributeList = new ArrayList<>();
 
+    @Opt(opt = "ua", longOpt = "usesSdkAttribute", description = "set the uses sdk attribute, " +
+            " name and value should be separated by " + MULTI_NAME_SEPERATER +
+            " , if name is in android namespace, prefix \"" + ANDROID_NAMESPACE + "\" should be set" +
+            ", multi option is supported", argName = "uses-sdk-attribute-name-value")
+    private List<String> usesSdkAttributeList = new ArrayList<>();
+
     @Opt(opt = "md", longOpt = "metaData", description = "add the meta data, " +
             " name and value should be separated by " + MULTI_NAME_SEPERATER +
             ", multi option is supported", argName = "meta-data-name-value")
@@ -232,6 +238,18 @@ public class ManifestEditorMain extends BaseCommand {
                             nameValue[0].trim().substring(ANDROID_NAMESPACE.length()), nameValue[1].trim()));
                 } else {
                     property.addApplicationAttribute(new AttributeItem(nameValue[0].trim(), nameValue[1].trim()).setNamespace(null));
+                }
+            }
+        }
+
+        for (String usesAttr : usesSdkAttributeList) {
+            String[] nameValue = usesAttr.split(MULTI_NAME_SEPERATER);
+            if (nameValue.length == 2) {
+                if (nameValue[0].trim().startsWith(ANDROID_NAMESPACE)) {
+                    property.addUsesSdkAttribute(new AttributeItem(
+                            nameValue[0].trim().substring(ANDROID_NAMESPACE.length()), nameValue[1].trim()));
+                } else {
+                    property.addUsesSdkAttribute(new AttributeItem(nameValue[0].trim(), nameValue[1].trim()).setNamespace(null));
                 }
             }
         }
