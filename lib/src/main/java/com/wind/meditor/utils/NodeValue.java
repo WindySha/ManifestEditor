@@ -57,6 +57,7 @@ public final class NodeValue {
         public static final String ALLOWBACKUP="allowBackup";
         public static final String LARGEHEAP="largeHeap";
         public static final String DEBUGGABLE="debuggable";
+        public static final String EXTRACTNATIVELIBS="extractNativeLibs";
         public static final String HARDWAREACCELERATED="hardwareAccelerated";
         public static final String FULLBACKUPONLY="fullBackupOnly";
         public static final String VMSAFEMODE="vmSafeMode";
