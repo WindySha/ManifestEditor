@@ -48,6 +48,10 @@ public class ManifestEditorMain extends BaseCommand {
             "set 0 to make the app debuggable = false", argName = "0 or 1")
     private int debuggable = -1;
 
+    @Opt(opt = "e", longOpt = "extractNativeLibs", description = "set 1 to make extractNativeLibs = true, " +
+    "set 0 to make extractNativeLibs = false", argName = "0 or 1")
+    private int extractNativeLibs = -1;
+
     @Opt(opt = "an", longOpt = "applicationName", description = "set the app entry application name",
             argName = "new-application-name")
     private String applicationName;
@@ -208,6 +212,10 @@ public class ManifestEditorMain extends BaseCommand {
 
         if (debuggable >= 0) {
             property.addApplicationAttribute(new AttributeItem(NodeValue.Application.DEBUGGABLE, debuggable != 0));
+        }
+
+        if (extractNativeLibs >= 0) {
+            property.addApplicationAttribute(new AttributeItem(NodeValue.Application.EXTRACTNATIVELIBS, extractNativeLibs != 0));
         }
 
         if (!Utils.isNullOrEmpty(applicationName)) {
