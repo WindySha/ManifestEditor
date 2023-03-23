@@ -53,6 +53,12 @@ public class FileProcesser {
                     ZipEntry zosEntry = new ZipEntry(entry.getName());
                     zosEntry.setComment(entry.getComment());
                     zosEntry.setExtra(entry.getExtra());
+                    zosEntry.setMethod(entry.getMethod());
+                    if (entry.getMethod() == ZipEntry.STORED) {
+                        zosEntry.setSize(entry.getSize());
+                        zosEntry.setCompressedSize(entry.getSize());
+                        zosEntry.setCrc(entry.getCrc());
+                    }
 
                     zipOutputStream.putNextEntry(zosEntry);
                     if ("AndroidManifest.xml".equals(zipEntryName)) {
