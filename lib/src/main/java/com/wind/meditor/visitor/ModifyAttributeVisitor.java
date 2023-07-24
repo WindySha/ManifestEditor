@@ -50,7 +50,9 @@ public class ModifyAttributeVisitor extends NodeVisitor {
                         || (resourceId >= 0 && resourceId == attributeItem.getResourceId())) {
                     hasBeenAddedAttributeList.add(attributeItem);
                     newObj = attributeItem.getValue();
-                    type = attributeItem.getType();
+                    if (obj != null && newObj != null && obj.getClass() != newObj.getClass()) {
+                        type = attributeItem.getType();
+                    }
                     break;
                 }
             }
