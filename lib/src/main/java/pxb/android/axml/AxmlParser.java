@@ -19,6 +19,7 @@ import static pxb.android.axml.NodeVisitor.TYPE_INT_BOOLEAN;
 import static pxb.android.axml.NodeVisitor.TYPE_STRING;
 
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
@@ -226,7 +227,7 @@ public class AxmlParser implements ResConst {
             }
                 break;
             case RES_XML_END_ELEMENT_TYPE: {
-                in.position(p + size);
+                ((Buffer)in).position(p + size);
                 event = END_TAG;
             }
                 break;
@@ -238,12 +239,12 @@ public class AxmlParser implements ResConst {
                 event = START_NS;
                 break;
             case RES_XML_END_NAMESPACE_TYPE:
-                in.position(p + size);
+                ((Buffer)in).position(p + size);
                 event = END_NS;
                 break;
             case RES_STRING_POOL_TYPE:
                 strings = StringItems.read(in);
-                in.position(p + size);
+                ((Buffer)in).position(p + size);
                 continue;
             case RES_XML_RESOURCE_MAP_TYPE:
                 int count = size / 4 - 2;
@@ -251,7 +252,7 @@ public class AxmlParser implements ResConst {
                 for (int i = 0; i < count; i++) {
                     resourceIds[i] = in.getInt();
                 }
-                in.position(p + size);
+                ((Buffer)in).position(p + size);
                 continue;
             case RES_XML_CDATA_TYPE:
                 lineNumber = in.getInt();
@@ -266,7 +267,7 @@ public class AxmlParser implements ResConst {
             default:
                 throw new RuntimeException();
             }
-            in.position(p + size);
+            ((Buffer)in).position(p + size);
             return event;
         }
         return END_FILE;

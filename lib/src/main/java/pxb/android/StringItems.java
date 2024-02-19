@@ -17,6 +17,7 @@ package pxb.android;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +43,7 @@ public class StringItems extends ArrayList<StringItem> {
 
         int base = trunkOffset + stringDataOffset;
         for (int i = 0; i < offsets.length; i++) {
-            in.position(base + offsets[i]);
+			((Buffer)in).position(base + offsets[i]);
             String s;
 
             if (0 != (flags & UTF8_FLAG)) {
