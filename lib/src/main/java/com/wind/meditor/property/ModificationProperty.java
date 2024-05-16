@@ -18,6 +18,8 @@ public class ModificationProperty {
     private List<AttributeItem> manifestAttributeList = new ArrayList<>();
     private List<AttributeItem> usesSdkAttributeList = new ArrayList<>();
 
+    private PermissionMapper permissionMapper;
+
     public List<String> getUsesPermissionList() {
         return usesPermissionList;
     }
@@ -69,6 +71,15 @@ public class ModificationProperty {
 
     public ModificationProperty addDeleteMetaData(String name) {
         this.deleteMetaDataList.add(new MetaData(name, ""));
+        return this;
+    }
+
+    public PermissionMapper getPermissionMapper() {
+        return permissionMapper;
+    }
+
+    public ModificationProperty setPermissionMapper(PermissionMapper mapper) {
+        this.permissionMapper = mapper;
         return this;
     }
 

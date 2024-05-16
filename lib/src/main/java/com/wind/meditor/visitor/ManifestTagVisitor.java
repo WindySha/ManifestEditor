@@ -28,13 +28,13 @@ public class ManifestTagVisitor extends ModifyAttributeVisitor {
 
         if (ns != null && (NodeValue.UsesPermission.TAG_NAME).equals(name)) {
             NodeVisitor child = super.child(null, NodeValue.UsesPermission.TAG_NAME);
-            return new UserPermissionTagVisitor(child, null, ns);
+            return new UserPermissionTagVisitor(child, null, ns, properties.getPermissionMapper());
         }
 
         NodeVisitor child = super.child(ns, name);
         if (NodeValue.Application.TAG_NAME.equals(name)) {
             return new ApplicationTagVisitor(child, properties.getApplicationAttributeList(),
-                    properties.getMetaDataList(), properties.getDeleteMetaDataList());
+                    properties.getMetaDataList(), properties.getDeleteMetaDataList(), properties.getPermissionMapper());
         }
 
         if (NodeValue.UsesSDK.TAG_NAME.equals(name)) {
@@ -42,7 +42,11 @@ public class ManifestTagVisitor extends ModifyAttributeVisitor {
         }
 
         if (NodeValue.UsesPermission.TAG_NAME.equals(name)) {
-            return new UserPermissionTagVisitor(child, getUsesPermissionGetter(), null);
+            return new UserPermissionTagVisitor(child, getUsesPermissionGetter(), null, properties.getPermissionMapper());
+        }
+
+        if (NodeValue.Permission.TAG_NAME.equals(name)) {
+            return new PermissionTagVisitor(child, properties.getPermissionMapper());
         }
         return child;
     }
