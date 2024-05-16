@@ -19,6 +19,7 @@ public class ModificationProperty {
     private List<AttributeItem> usesSdkAttributeList = new ArrayList<>();
 
     private PermissionMapper permissionMapper;
+    private AttributeMapper<String> providerAuthorityMapper;
 
     public List<String> getUsesPermissionList() {
         return usesPermissionList;
@@ -80,6 +81,15 @@ public class ModificationProperty {
 
     public ModificationProperty setPermissionMapper(PermissionMapper mapper) {
         this.permissionMapper = mapper;
+        return this;
+    }
+
+    public AttributeMapper<String> getAuthorityMapper() {
+        return providerAuthorityMapper;
+    }
+
+    public ModificationProperty setAuthorityMapper(AttributeMapper<String> mapper) {
+        this.providerAuthorityMapper = mapper;
         return this;
     }
 

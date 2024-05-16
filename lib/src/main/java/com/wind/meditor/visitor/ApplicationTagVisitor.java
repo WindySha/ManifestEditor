@@ -1,6 +1,7 @@
 package com.wind.meditor.visitor;
 
 import com.wind.meditor.property.AttributeItem;
+import com.wind.meditor.property.AttributeMapper;
 import com.wind.meditor.property.ModificationProperty;
 import com.wind.meditor.property.PermissionMapper;
 import com.wind.meditor.utils.NodeValue;
@@ -17,17 +18,19 @@ public class ApplicationTagVisitor extends ModifyAttributeVisitor {
     private List<ModificationProperty.MetaData> deleteMetaDataList;
     private ModificationProperty.MetaData curMetaData;
     private PermissionMapper permissionMapper;
+    private AttributeMapper<String> authorityMapper;
 
     private static final String META_DATA_FLAG = "meta_data_flag";
 
     ApplicationTagVisitor(NodeVisitor nv, List<AttributeItem> modifyAttributeList,
                           List<ModificationProperty.MetaData> metaDataList,
                           List<ModificationProperty.MetaData> deleteMetaDataList,
-                          PermissionMapper permissionMapper) {
+                          PermissionMapper permissionMapper, AttributeMapper<String> authorityMapper) {
         super(nv, modifyAttributeList);
         this.metaDataList = metaDataList;
         this.deleteMetaDataList = deleteMetaDataList;
         this.permissionMapper = permissionMapper;
+        this.authorityMapper = authorityMapper;
     }
 
     @Override
@@ -43,7 +46,7 @@ public class ApplicationTagVisitor extends ModifyAttributeVisitor {
             NodeVisitor nv = super.child(ns, name);
             return new DeleteMetaDataVisitor(nv, deleteMetaDataList);
         } else if (NodeValue.Application.COMPONENT_TAGS.contains(name)) {
-            return new ApplicationComponentTagVisitor(super.child(ns, name), permissionMapper);
+            return new ApplicationComponentTagVisitor(super.child(ns, name), permissionMapper, authorityMapper);
         }
         return super.child(ns, name);
     }
