@@ -1,5 +1,8 @@
 package com.wind.meditor.utils;
 
+import java.util.Arrays;
+import java.util.List;
+
 public final class NodeValue {
     private NodeValue(){}
 
@@ -26,6 +29,13 @@ public final class NodeValue {
         public static final String MAX_SDK_VERSION="maxSdkVersion";
         public static final String MIN_SDK_VERSION="minSdkVersion";
         public static final String TARGET_SDK_VERSION="targetSdkVersion";
+    }
+
+    public static final class Permission{
+        public static final String TAG_NAME = "permission";
+
+        public static final String NAME="name";
+        public static final String PROTECTION_LEVEL="protectionLevel";
     }
 
     public static final class UsesPermission{
@@ -64,7 +74,35 @@ public final class NodeValue {
         public static final String ENABLED="enabled";
         public static final String DESCRIPTION="description";
         public static final String PROCESS="process";
+
+        public static abstract class Component {
+            public static final String NAME = "name";
+            public static final String ENABLED = "enabled";
+            public static final String PROCESS = "process";
+            public static final String PERMISSION = "permission";
+        }
+
+        public static final class Activity extends Component {
+            public static final String TAG_NAME = "activity";
+        }
+
+        public static final class Service extends Component {
+            public static final String TAG_NAME = "service";
+        }
+
+        public static final class Receiver extends Component {
+            public static final String TAG_NAME = "receiver";
+        }
+
+        public static final class Provider extends Component {
+            public static final String TAG_NAME = "provider";
+            public static final String AUTHORITIES = "authorities";
+            public static final String READ_PERMISSION = "readPermission";
+            public static final String WRITE_PERMISSION = "writePermission";
+        }
+
+        public static final List<String> COMPONENT_TAGS = Arrays.asList(
+                Activity.TAG_NAME, Service.TAG_NAME, Receiver.TAG_NAME, Provider.TAG_NAME
+        );
     }
-
-
 }
