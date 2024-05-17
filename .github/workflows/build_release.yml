@@ -1,0 +1,36 @@
+name: Build and Release
+
+on: 
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - name: Init
+      run: echo "FILE_NAME=./lib/build/libs/ManifestEditor-${GITHUB_REF_NAME#v}.jar" >> $GITHUB_ENV
+    - name: Checkout Repo
+      uses: actions/checkout@v4
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: 8.0
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v3
+      with:
+        gradle-version: 5.4
+    - name: Build with Gradle
+      run: ./gradlew build
+    - name: Create Release
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: ${{ env.FILE_NAME }}
+        artifactContentType: "application/java-archive"
+        artifactErrorsFailBuild: true
+        generateReleaseNotes: true
+        makeLatest: "latest"
