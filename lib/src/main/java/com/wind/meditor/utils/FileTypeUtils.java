@@ -34,6 +34,14 @@ public class FileTypeUtils {
         return false;
     }
 
+    public static boolean isSignatureFile(String filePath) {
+        return filePath.startsWith("META-INF/") && 
+          (filePath.endsWith(".RSA") ||
+           filePath.endsWith(".DSA") ||
+           filePath.endsWith(".SF") ||
+           filePath.endsWith(".MF"));
+    }
+
     public static String getFileHeader(String filePath) {
         String cachedHeader = fileHeaderCache.get(filePath);
         if (cachedHeader != null && !cachedHeader.isEmpty()) {
