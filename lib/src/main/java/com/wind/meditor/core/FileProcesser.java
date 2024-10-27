@@ -42,7 +42,8 @@ public class FileProcesser {
 //                Log.d(" zipEntryName = " + zipEntryName);
 
                 // ignore signature files, we will resign it.
-                if (zipEntryName.startsWith("META-INF")) {
+                if (FileTypeUtils.isSignatureFile(zipEntryName)) {
+                    Log.i("ignore signature file: " + zipEntryName);
                     continue;
                 }
 
