@@ -3,6 +3,7 @@ package com.wind.meditor.core;
 import com.wind.meditor.property.ModificationProperty;
 import com.wind.meditor.utils.Log;
 import com.wind.meditor.utils.Utils;
+import com.wind.meditor.utils.FileTypeUtils;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
