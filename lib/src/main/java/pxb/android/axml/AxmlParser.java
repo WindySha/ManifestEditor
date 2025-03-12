@@ -15,6 +15,7 @@
  */
 package pxb.android.axml;
 
+import static pxb.android.axml.NodeVisitor.TYPE_FIRST_INT;
 import static pxb.android.axml.NodeVisitor.TYPE_INT_BOOLEAN;
 import static pxb.android.axml.NodeVisitor.TYPE_STRING;
 
@@ -122,6 +123,15 @@ public class AxmlParser implements ResConst {
     public Object getAttrValue(int i) {
         int v = attrs.get(i * 5 + 4);
 
+        switch (getAttrType(i)) {
+        case TYPE_FIRST_INT:
+            return v;
+        case TYPE_STRING:
+            return strings[v];
+        case TYPE_INT_BOOLEAN:
+            return v != 0;
+        }
+
         if (i == idAttribute) {
             return ValueWrapper.wrapId(v, getAttrRawString(i));
         } else if (i == styleAttribute) {
@@ -130,14 +140,7 @@ public class AxmlParser implements ResConst {
             return ValueWrapper.wrapClass(v, getAttrRawString(i));
         }
 
-        switch (getAttrType(i)) {
-        case TYPE_STRING:
-            return strings[v];
-        case TYPE_INT_BOOLEAN:
-            return v != 0;
-        default:
-            return v;
-        }
+        return v;
     }
 
     public int getLineNumber() {
