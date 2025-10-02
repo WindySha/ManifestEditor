@@ -4,6 +4,7 @@ import com.wind.meditor.property.AttributeItem;
 import com.wind.meditor.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import pxb.android.axml.NodeVisitor;
