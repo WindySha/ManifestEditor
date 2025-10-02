@@ -26,14 +26,15 @@ public class ApplicationTagVisitor extends ModifyAttributeVisitor {
     ApplicationTagVisitor(NodeVisitor nv, List<AttributeItem> modifyAttributeList,
                           List<ModificationProperty.MetaData> metaDataList,
                           List<ModificationProperty.MetaData> deleteMetaDataList,
-                          List<ModificationProperty.Provider> providerList, 
-                          PermissionMapper permissionMapper, AttributeMapper<String> authorityMapper) {
+                          PermissionMapper permissionMapper,
+                          AttributeMapper<String> authorityMapper,
+                          List<ModificationProperty.Provider> providerList) {
         super(nv, modifyAttributeList);
         this.metaDataList = metaDataList;
         this.deleteMetaDataList = deleteMetaDataList;
         this.permissionMapper = permissionMapper;
         this.authorityMapper = authorityMapper;
-        this.providerList = providerList;
+        this.providerList = providerList; // 儲存 providerList
     }
 
     @Override

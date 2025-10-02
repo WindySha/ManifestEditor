@@ -14,7 +14,10 @@ public class ProviderVisitor extends ModifyAttributeVisitor{
 
         NodeVisitor intentFilter = super.child(null, "intent-filter");
         NodeVisitor action = intentFilter.child(null, "action");
-        action.attr(null, "name", -1, NodeVisitor.TYPE_STRING, provider.getFilterNameValue());
+
+        List<AttributeItem> list = new ArrayList<>();
+        list.add(new AttributeItem("name", provider.getFilterNameValue()));
+        new ModifyAttributeVisitor(action, list,true);
     }
 
     private static List<AttributeItem> convertToAttr(ModificationProperty.Provider provider) {
@@ -23,7 +26,7 @@ public class ProviderVisitor extends ModifyAttributeVisitor{
         }
         ArrayList<AttributeItem> list = new ArrayList<>();
         for (String keys : provider.getNameValue().keySet()){
-            list.add(new AttributeItem(keys, provider.getNameValue().get(keys)));
+           list.add(new AttributeItem(keys, provider.getNameValue().get(keys)));
         }
         return list;
     }
