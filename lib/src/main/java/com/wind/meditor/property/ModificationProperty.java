@@ -1,6 +1,7 @@
 package com.wind.meditor.property;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -20,6 +21,7 @@ public class ModificationProperty {
 
     private PermissionMapper permissionMapper;
     private AttributeMapper<String> providerAuthorityMapper;
+    private List<Provider> providerList = new ArrayList<>();
 
     public List<String> getUsesPermissionList() {
         return usesPermissionList;
@@ -36,6 +38,11 @@ public class ModificationProperty {
 
     public ModificationProperty addApplicationAttribute(AttributeItem item) {
         applicationAttributeList.add(item);
+        return this;
+    }
+
+    public ModificationProperty addProvider(HashMap<String,String> nameValue,String filterNameValue){
+        providerList.add(new Provider(nameValue,filterNameValue));
         return this;
     }
 
@@ -68,6 +75,10 @@ public class ModificationProperty {
 
     public List<MetaData> getDeleteMetaDataList() {
         return deleteMetaDataList;
+    }
+
+    public List<Provider> getProviderList(){
+        return providerList;
     }
 
     public ModificationProperty addDeleteMetaData(String name) {
@@ -112,6 +123,21 @@ public class ModificationProperty {
 
         public String getValue() {
             return value;
+        }
+    }
+
+    public static class Provider{
+        private HashMap<String,String> nameValue;
+        private String filterNameValue;
+        public Provider(HashMap<String,String> nameValue,String filterNameValue){
+            this.nameValue = nameValue;
+            this.filterNameValue = filterNameValue;
+        }
+        public HashMap<String,String> getNameValue(){
+            return nameValue;
+        }
+        public String getFilterNameValue(){
+            return filterNameValue;
         }
     }
 }

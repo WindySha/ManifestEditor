@@ -14,9 +14,10 @@ import pxb.android.axml.NodeVisitor;
  */
 public class ApplicationTagVisitor extends ModifyAttributeVisitor {
 
+    private ModificationProperty.MetaData curMetaData;
     private List<ModificationProperty.MetaData> metaDataList;
     private List<ModificationProperty.MetaData> deleteMetaDataList;
-    private ModificationProperty.MetaData curMetaData;
+    private List<ModificationProperty.Provider> providerList;
     private PermissionMapper permissionMapper;
     private AttributeMapper<String> authorityMapper;
 
@@ -25,16 +26,20 @@ public class ApplicationTagVisitor extends ModifyAttributeVisitor {
     ApplicationTagVisitor(NodeVisitor nv, List<AttributeItem> modifyAttributeList,
                           List<ModificationProperty.MetaData> metaDataList,
                           List<ModificationProperty.MetaData> deleteMetaDataList,
-                          PermissionMapper permissionMapper, AttributeMapper<String> authorityMapper) {
+                          PermissionMapper permissionMapper,
+                          AttributeMapper<String> authorityMapper,
+                          List<ModificationProperty.Provider> providerList) {
         super(nv, modifyAttributeList);
         this.metaDataList = metaDataList;
         this.deleteMetaDataList = deleteMetaDataList;
         this.permissionMapper = permissionMapper;
         this.authorityMapper = authorityMapper;
+        this.providerList = providerList; // 儲存 providerList
     }
 
     @Override
     public NodeVisitor child(String ns, String name) {
+        System.out.println(" ManifestTagVisitor child  --> ns = " + ns + " name = " + name);
         if (META_DATA_FLAG.equals(ns)) {
             NodeVisitor nv = super.child(null, name);
             if (curMetaData != null) {
@@ -57,11 +62,26 @@ public class ApplicationTagVisitor extends ModifyAttributeVisitor {
         curMetaData = null;
     }
 
+     public static String getStackTrace(Throwable t){
+        StringBuilder sb = new StringBuilder();
+        for(StackTraceElement element : t.getStackTrace()){
+            sb.append(element.toString());
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+
     @Override
     public void end() {
         if (metaDataList != null) {
             for (ModificationProperty.MetaData data : metaDataList) {
                 addChild(data);
+            }
+        }
+        if (providerList != null) {
+            for (ModificationProperty.Provider provider : providerList) {
+                NodeVisitor nv = super.child(null, "provider");
+                new ProviderVisitor(nv, provider);
             }
         }
         super.end();
