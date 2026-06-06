@@ -155,17 +155,17 @@ $ java -jar ../ManifestEditor.jar ../AndroidManifest.xml -dmd xposedminversion -
 ```
 通过删除和新增两个操作可以实现对某个指定的`<meta-data/>`的修改。
 
-### 11. 新增Activity节点: `-act`
+### 11. 新增或替换Activity节点: `-act`
 ```
 $ java -jar ../ManifestEditor.jar ../AndroidManifest.xml -act com.example.NewActivity
 ```
-添加带exported属性的Activity：
+如果需要同时设置 `android:exported`，可以直接在名称后面附上布尔值或 `1/0`：
 ```
 $ java -jar ../ManifestEditor.jar ../AndroidManifest.xml -act com.example.LoginActivity:true
 ```
 参数格式：`activity-name[:exported]`
 
-**注意**：目前Activity功能已简化，仅支持name和exported属性。如果需要更复杂的Activity配置，请使用其他工具或直接编辑Manifest文件。
+**说明**：`-act` 目前只处理 `name` 和 `exported` 两个属性。新增时会写入这两个必要字段；若同名 Activity 已存在，则只更新当前支持的属性，不会扩展其他复杂配置。
 # **修改Apk中的Manifest文件**
 ```
 $ java -jar ../ManifestEditor.jar ../original.apk -o ../new_build_unsigned.apk -d 1

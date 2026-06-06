@@ -155,7 +155,6 @@ public class ModificationProperty {
         private String name;
         private Boolean exported;
 
-
         public Activity(String name) {
             this.name = name;
         }
