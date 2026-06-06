@@ -32,10 +32,15 @@ public class ManifestTagVisitor extends ModifyAttributeVisitor {
 
         NodeVisitor child = super.child(ns, name);
         if (NodeValue.Application.TAG_NAME.equals(name)) {
-            return new ApplicationTagVisitor(child, modificationProperty.getApplicationAttributeList(),
+            ApplicationTagVisitor appVisitor = new ApplicationTagVisitor(child, modificationProperty.getApplicationAttributeList(),
                     modificationProperty.getMetaDataList(), modificationProperty.getDeleteMetaDataList(),
                     modificationProperty.getPermissionMapper(), modificationProperty.getAuthorityMapper(),
                     modificationProperty.getProviderList(), modificationProperty.getActivityList());
+            List<String> deleteAuthorities = modificationProperty.getDeleteProviderAuthorities();
+            if (deleteAuthorities != null && !deleteAuthorities.isEmpty()) {
+                appVisitor.setDeleteProviderAuthorities(deleteAuthorities);
+            }
+            return appVisitor;
         }
 
         if (NodeValue.UsesSDK.TAG_NAME.equals(name)) {

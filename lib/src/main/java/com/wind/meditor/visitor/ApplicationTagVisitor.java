@@ -25,8 +25,13 @@ public class ApplicationTagVisitor extends ModifyAttributeVisitor {
     private PermissionMapper permissionMapper;
     private AttributeMapper<String> authorityMapper;
     private Map<String, ModificationProperty.Activity> pendingActivitiesByName;
+    private List<String> deleteProviderAuthorities;
 
     private static final String META_DATA_FLAG = "meta_data_flag";
+
+    void setDeleteProviderAuthorities(List<String> deleteProviderAuthorities) {
+        this.deleteProviderAuthorities = deleteProviderAuthorities;
+    }
 
     ApplicationTagVisitor(NodeVisitor nv, List<AttributeItem> modifyAttributeList,
                           List<ModificationProperty.MetaData> metaDataList,
@@ -64,6 +69,10 @@ public class ApplicationTagVisitor extends ModifyAttributeVisitor {
             NodeVisitor nv = super.child(ns, name);
             return new DeleteMetaDataVisitor(nv, deleteMetaDataList);
         } else if (NodeValue.Application.COMPONENT_TAGS.contains(name)) {
+            if (NodeValue.Application.Provider.TAG_NAME.equals(name)
+                    && deleteProviderAuthorities != null && !deleteProviderAuthorities.isEmpty()) {
+                return new ProviderDeleteVisitor(this.nv, deleteProviderAuthorities, ns, name);
+            }
             NodeVisitor nv = super.child(ns, name);
             if (NodeValue.Application.Activity.TAG_NAME.equals(name)) {
                 return new ActivityTagVisitor(nv, pendingActivitiesByName);
