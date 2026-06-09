@@ -1,43 +1,41 @@
 package com.wind.meditor.visitor;
 
 import com.wind.meditor.property.ModificationProperty;
-import com.wind.meditor.utils.Log;
 
 import java.util.Map;
 
 import pxb.android.axml.NodeVisitor;
 
 /**
- * 处理Activity节点的访问者类
- * 负责在AndroidManifest.xml中添加新的Activity节点或替换现有Activity节点
+ * Handles Activity nodes in AndroidManifest.xml.
  */
 public class ActivityTagVisitor extends NodeVisitor {
 
-    private ModificationProperty.Activity activity;
-    private boolean activityAdded = false;
-    private boolean isReplacementMode = false;
-    private String existingActivityName = null;
-    private boolean activityReplaced = false;
-    private Map<String, ModificationProperty.Activity> activityReplacementMap;
-    private boolean nameChecked = false;
+    private ModificationProperty.Activity targetActivity;
+    private boolean activityWritten = false;
+    private boolean replaceExistingActivity = false;
+    private String currentActivityName = null;
+    private boolean replacementApplied = false;
+    private Map<String, ModificationProperty.Activity> replacementActivities;
+    private boolean nameResolved = false;
 
-    // 构造函数1：用于添加新Activity
+    // Creates a visitor for adding a new Activity.
     public ActivityTagVisitor(NodeVisitor nv, ModificationProperty.Activity activity) {
         super(nv);
-        this.activity = activity;
-        this.isReplacementMode = false;
+        this.targetActivity = activity;
+        this.replaceExistingActivity = false;
     }
 
-    // 构造函数2：用于替换现有Activity
+    // Creates a visitor for replacing an existing Activity.
     public ActivityTagVisitor(NodeVisitor nv, Map<String, ModificationProperty.Activity> activityReplacementMap) {
         super(nv);
-        this.activityReplacementMap = activityReplacementMap;
-        this.isReplacementMode = true;
+        this.replacementActivities = activityReplacementMap;
+        this.replaceExistingActivity = true;
     }
 
     @Override
     public void attr(String ns, String name, int resourceId, int type, Object obj) {
-        if (isReplacementMode) {
+        if (replaceExistingActivity) {
             handleReplacementAttribute(ns, name, resourceId, type, obj);
         } else {
             super.attr(ns, name, resourceId, type, obj);
@@ -45,131 +43,111 @@ public class ActivityTagVisitor extends NodeVisitor {
     }
 
     private void handleReplacementAttribute(String ns, String name, int resourceId, int type, Object obj) {
-        // 首次遇到name属性时检查是否需要替换
-        if (!nameChecked && "name".equals(name) && obj instanceof String) {
-            existingActivityName = (String) obj;
-            ModificationProperty.Activity replacementActivity = activityReplacementMap.get(existingActivityName);
+        if (!nameResolved && "name".equals(name) && obj instanceof String) {
+            currentActivityName = (String) obj;
+            ModificationProperty.Activity replacementActivity = replacementActivities.get(currentActivityName);
             if (replacementActivity != null) {
-                this.activity = replacementActivity;
-                activityReplacementMap.remove(existingActivityName);
-                nameChecked = true;
+                targetActivity = replacementActivity;
+                replacementActivities.remove(currentActivityName);
+                nameResolved = true;
             }
         }
 
-        // 检查是否为目标Activity
-        boolean isTarget = isTargetActivity();
-        // 如果是同名Activity，则替换属性
-        boolean shouldReplace = shouldReplaceAttribute(name);
-        if (shouldReplace) {
+        if (shouldReplaceAttribute(name)) {
             Object newValue = getNewAttributeValue(name);
             if (newValue != null) {
                 super.attr(ns, name, resourceId, type, newValue);
-                activityReplaced = true;
+                replacementApplied = true;
                 return;
             }
         }
 
-        // 保留原有属性（只有在不需要替换时才保留）
-        // 注意：这里不能无条件调用super.attr，否则会覆盖已设置的新值
-        if (!shouldReplaceAttribute(name)) {
-            super.attr(ns, name, resourceId, type, obj);
-        }
-    }
-
-    @Override
-    public NodeVisitor child(String ns, String name) {
-        NodeVisitor child = super.child(ns, name);
-        return child;
+        super.attr(ns, name, resourceId, type, obj);
     }
 
     @Override
     public void end() {
-        if (isReplacementMode) {
-            // 如果还没有替换任何属性，且是目标Activity，则添加缺失的属性
-            if (!activityReplaced && isTargetActivity()) {
+        if (replaceExistingActivity) {
+            if (!replacementApplied && isTargetActivity()) {
                 addMissingAttributes();
             }
-        } else {
-            if (!activityAdded) {
-                setActivityAttributes();
-            }
+        } else if (!activityWritten) {
+            setActivityAttributes();
         }
         super.end();
     }
 
     /**
-     * 判断是否应该替换指定属性
+     * Returns true when the given attribute should be replaced.
      */
     private boolean shouldReplaceAttribute(String attributeName) {
-        boolean isTarget = isTargetActivity();
-        if (!isTarget) {
+        if (!isTargetActivity()) {
             return false;
         }
-        
-        // 目前只支持替换exported属性
+
         if ("exported".equals(attributeName)) {
-            boolean shouldReplace = activity != null && activity.getExported() != null;
-            return shouldReplace;
+            return targetActivity != null && targetActivity.getExported() != null;
         }
-        
+
         return false;
     }
 
     /**
-     * 获取新属性值
+     * Returns the replacement value for the given attribute.
      */
     private Object getNewAttributeValue(String attributeName) {
-        if (activity == null) return null;
-        
-        if ("exported".equals(attributeName)) {
-            return activity.getExported() ? 1 : 0; // 1表示true，0表示false
+        if (targetActivity == null) {
+            return null;
         }
-        
+
+        if ("exported".equals(attributeName)) {
+            return targetActivity.getExported() ? 1 : 0;
+        }
+
         return null;
     }
 
     /**
-     * 判断是否为目标Activity（同名）
+     * Returns true when the current node matches the target Activity.
      */
     private boolean isTargetActivity() {
-        return existingActivityName != null &&
-               activity != null &&
-               existingActivityName.equals(activity.getName());
+        return currentActivityName != null &&
+               targetActivity != null &&
+               currentActivityName.equals(targetActivity.getName());
     }
 
     /**
-     * 添加新Activity中有但原Activity中没有的属性
+     * Adds attributes that exist on the new Activity but are missing on the current one.
      */
     private void addMissingAttributes() {
-        if (activity == null) return;
-
-        // 添加缺失的exported属性
-        if (activity.getExported() != null) {
-            super.attr("http://schemas.android.com/apk/res/android", "exported",
-                0x01010010, // android:exported resource id
-                18, activity.getExported() ? 1 : 0);
-        }
-    }
-
-    /**
-     * 设置Activity的基本属性（用于添加新模式）
-     */
-    private void setActivityAttributes() {
-        if (activity == null || activity.getName() == null) {
+        if (targetActivity == null) {
             return;
         }
 
-        // 设置android:name属性
-        super.attr("http://schemas.android.com/apk/res/android", "name", 
-            0x01010003, // android:name resource id
-            3, activity.getName()); // 3 represents TYPE_STRING
-
-        // 设置android:exported属性
-        if (activity.getExported() != null) {
+        if (targetActivity.getExported() != null) {
             super.attr("http://schemas.android.com/apk/res/android", "exported",
-                0x01010010, // android:exported resource id
-                18, activity.getExported() ? 1 : 0); // 18 represents TYPE_INT_BOOLEAN
+                0x01010010,
+                18, targetActivity.getExported() ? 1 : 0);
         }
-        activityAdded = true;
+    }
+
+    /**
+     * Writes the base Activity attributes for a newly added node.
+     */
+    private void setActivityAttributes() {
+        if (targetActivity == null || targetActivity.getName() == null) {
+            return;
+        }
+
+        super.attr("http://schemas.android.com/apk/res/android", "name",
+            0x01010003,
+            3, targetActivity.getName());
+
+        if (targetActivity.getExported() != null) {
+            super.attr("http://schemas.android.com/apk/res/android", "exported",
+                0x01010010,
+                18, targetActivity.getExported() ? 1 : 0);
+        }
+        activityWritten = true;
     }
 }

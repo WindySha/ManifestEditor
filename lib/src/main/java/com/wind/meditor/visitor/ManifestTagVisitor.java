@@ -11,7 +11,7 @@ import pxb.android.axml.NodeVisitor;
 
 public class ManifestTagVisitor extends ModifyAttributeVisitor {
 
-    private ModificationProperty properties;
+    private ModificationProperty modificationProperty;
 
     private List<String> hasIncludedUsesPermissionList = new ArrayList<>();
 
@@ -19,7 +19,7 @@ public class ManifestTagVisitor extends ModifyAttributeVisitor {
 
     public ManifestTagVisitor(NodeVisitor nv, ModificationProperty properties) {
         super(nv, properties.getManifestAttributeList());
-        this.properties = properties;
+        this.modificationProperty = properties;
     }
 
     @Override
@@ -27,27 +27,32 @@ public class ManifestTagVisitor extends ModifyAttributeVisitor {
 
         if (ns != null && (NodeValue.UsesPermission.TAG_NAME).equals(name)) {
             NodeVisitor child = super.child(null, NodeValue.UsesPermission.TAG_NAME);
-            return new UserPermissionTagVisitor(child, null, ns, properties.getPermissionMapper());
+            return new UserPermissionTagVisitor(child, null, ns, modificationProperty.getPermissionMapper());
         }
 
         NodeVisitor child = super.child(ns, name);
         if (NodeValue.Application.TAG_NAME.equals(name)) {
-            return new ApplicationTagVisitor(child, properties.getApplicationAttributeList(),
-                    properties.getMetaDataList(), properties.getDeleteMetaDataList(),
-                    properties.getPermissionMapper(), properties.getAuthorityMapper(), 
-                    properties.getProviderList(), properties.getActivityList());
+            ApplicationTagVisitor appVisitor = new ApplicationTagVisitor(child, modificationProperty.getApplicationAttributeList(),
+                    modificationProperty.getMetaDataList(), modificationProperty.getDeleteMetaDataList(),
+                    modificationProperty.getPermissionMapper(), modificationProperty.getAuthorityMapper(),
+                    modificationProperty.getProviderList(), modificationProperty.getActivityList());
+            List<String> deleteAuthorities = modificationProperty.getDeleteProviderAuthorities();
+            if (deleteAuthorities != null && !deleteAuthorities.isEmpty()) {
+                appVisitor.setDeleteProviderAuthorities(deleteAuthorities);
+            }
+            return appVisitor;
         }
 
         if (NodeValue.UsesSDK.TAG_NAME.equals(name)) {
-            return new ModifyAttributeVisitor(child, properties.getUsesSdkAttributeList());
+            return new ModifyAttributeVisitor(child, modificationProperty.getUsesSdkAttributeList());
         }
 
         if (NodeValue.UsesPermission.TAG_NAME.equals(name)) {
-            return new UserPermissionTagVisitor(child, getUsesPermissionGetter(), null, properties.getPermissionMapper());
+            return new UserPermissionTagVisitor(child, getUsesPermissionGetter(), null, modificationProperty.getPermissionMapper());
         }
 
         if (NodeValue.Permission.TAG_NAME.equals(name)) {
-            return new PermissionTagVisitor(child, properties.getPermissionMapper());
+            return new PermissionTagVisitor(child, modificationProperty.getPermissionMapper());
         }
         return child;
     }
@@ -61,7 +66,7 @@ public class ManifestTagVisitor extends ModifyAttributeVisitor {
 
     @Override
     public void end() {
-        List<String> list = properties.getUsesPermissionList();
+        List<String> list = modificationProperty.getUsesPermissionList();
         if (list != null && list.size() > 0) {
             for (String permissionName : list) {
                 // permission is not added.

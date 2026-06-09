@@ -87,10 +87,9 @@ public class ManifestEditorMain extends BaseCommand {
             ", multi option is supported", argName = "delete-meta-data-name")
     private List<String> deleteMetaDataList = new ArrayList<>();
 
-    @Opt(opt = "act", longOpt = "activity", description = "add new activity or replace existing activity, " +
-            "format: activity-name[:exported]" +
-            ", supports true/false or 1/0 for exported" +
-            ", multi option is supported", argName = "activity-config")
+    @Opt(opt = "act", longOpt = "activity", description = "add or replace an activity node, " +
+            "format: activity-name[:exported], supports true/false or 1/0 for exported, " +
+            "multi option is supported", argName = "activity-config")
     private List<String> activityList = new ArrayList<>();
 
     public static void main(String... args) {
@@ -280,12 +279,12 @@ public class ManifestEditorMain extends BaseCommand {
             property.addDeleteMetaData(metaData);
         }
 
-        for (String activityConfig : activityList) {
-            String[] parts = activityConfig.split(":");
-            if (parts.length >= 1) {
-                ModificationProperty.Activity activity = new ModificationProperty.Activity(parts[0]);
-                if (parts.length >= 2 && !parts[1].isEmpty()) {
-                    activity.setExported("true".equalsIgnoreCase(parts[1]) || "1".equals(parts[1]));
+        for (String activityConfigItem : activityList) {
+            String[] activityParts = activityConfigItem.split(":");
+            if (activityParts.length >= 1) {
+                ModificationProperty.Activity activity = new ModificationProperty.Activity(activityParts[0]);
+                if (activityParts.length >= 2 && !activityParts[1].isEmpty()) {
+                    activity.setExported("true".equalsIgnoreCase(activityParts[1]) || "1".equals(activityParts[1]));
                 }
                 property.addActivity(activity);
             }

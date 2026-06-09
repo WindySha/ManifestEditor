@@ -24,9 +24,14 @@ public class ApplicationTagVisitor extends ModifyAttributeVisitor {
     private List<ModificationProperty.Activity> activityList;
     private PermissionMapper permissionMapper;
     private AttributeMapper<String> authorityMapper;
-    private Map<String, ModificationProperty.Activity> activityReplacementMap;
+    private Map<String, ModificationProperty.Activity> pendingActivitiesByName;
+    private List<String> deleteProviderAuthorities;
 
     private static final String META_DATA_FLAG = "meta_data_flag";
+
+    void setDeleteProviderAuthorities(List<String> deleteProviderAuthorities) {
+        this.deleteProviderAuthorities = deleteProviderAuthorities;
+    }
 
     ApplicationTagVisitor(NodeVisitor nv, List<AttributeItem> modifyAttributeList,
                           List<ModificationProperty.MetaData> metaDataList,
@@ -42,10 +47,10 @@ public class ApplicationTagVisitor extends ModifyAttributeVisitor {
         this.authorityMapper = authorityMapper;
         this.providerList = providerList;
         this.activityList = activityList;
-        this.activityReplacementMap = new HashMap<>();
+        this.pendingActivitiesByName = new HashMap<>();
         if (activityList != null) {
             for (ModificationProperty.Activity activity : activityList) {
-                activityReplacementMap.put(activity.getName(), activity);
+                pendingActivitiesByName.put(activity.getName(), activity);
             }
         }
     }
@@ -64,9 +69,13 @@ public class ApplicationTagVisitor extends ModifyAttributeVisitor {
             NodeVisitor nv = super.child(ns, name);
             return new DeleteMetaDataVisitor(nv, deleteMetaDataList);
         } else if (NodeValue.Application.COMPONENT_TAGS.contains(name)) {
+            if (NodeValue.Application.Provider.TAG_NAME.equals(name)
+                    && deleteProviderAuthorities != null && !deleteProviderAuthorities.isEmpty()) {
+                return new ProviderDeleteVisitor(this.nv, deleteProviderAuthorities, ns, name);
+            }
             NodeVisitor nv = super.child(ns, name);
             if (NodeValue.Application.Activity.TAG_NAME.equals(name)) {
-                return new ActivityTagVisitor(nv, activityReplacementMap);
+                return new ActivityTagVisitor(nv, pendingActivitiesByName);
             }
             return new ApplicationComponentTagVisitor(nv, permissionMapper, authorityMapper);
         }
@@ -101,8 +110,8 @@ public class ApplicationTagVisitor extends ModifyAttributeVisitor {
                 new ProviderVisitor(nv, provider);
             }
         }
-        if (!activityReplacementMap.isEmpty()) {
-            for (ModificationProperty.Activity activity : activityReplacementMap.values()) {
+        if (!pendingActivitiesByName.isEmpty()) {
+            for (ModificationProperty.Activity activity : pendingActivitiesByName.values()) {
                 NodeVisitor nv = super.child(null, "activity");
                 if (nv != null) {
                     ActivityTagVisitor activityVisitor = new ActivityTagVisitor(nv, activity);

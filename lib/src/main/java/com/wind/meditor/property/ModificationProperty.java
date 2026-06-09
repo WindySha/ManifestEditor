@@ -23,6 +23,7 @@ public class ModificationProperty {
     private PermissionMapper permissionMapper;
     private AttributeMapper<String> providerAuthorityMapper;
     private List<Provider> providerList = new ArrayList<>();
+    private List<String> deleteProviderAuthorities = new ArrayList<>();
 
     public List<String> getUsesPermissionList() {
         return usesPermissionList;
@@ -85,6 +86,15 @@ public class ModificationProperty {
 
     public List<Provider> getProviderList(){
         return providerList;
+    }
+
+    public List<String> getDeleteProviderAuthorities() {
+        return deleteProviderAuthorities;
+    }
+
+    public ModificationProperty addDeleteProviderAuthorities(String authorities) {
+        deleteProviderAuthorities.add(authorities);
+        return this;
     }
 
     public List<Activity> getActivityList() {
@@ -154,7 +164,6 @@ public class ModificationProperty {
     public static class Activity {
         private String name;
         private Boolean exported;
-
 
         public Activity(String name) {
             this.name = name;
