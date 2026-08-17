@@ -10,24 +10,16 @@ import pxb.android.axml.NodeVisitor;
 
 public class ProviderVisitor extends ModifyAttributeVisitor{
     ProviderVisitor(NodeVisitor nv, ModificationProperty.Provider provider) {
-        super(nv, convertToAttr(provider), true);
+        super(nv, provider == null ? null : provider.getAttributes(), true);
 
-        NodeVisitor intentFilter = super.child(null, "intent-filter");
-        NodeVisitor action = intentFilter.child(null, "action");
+        String filterAction = provider == null ? null : provider.getFilterAction();
+        if (filterAction != null) {
+            NodeVisitor intentFilter = super.child(null, "intent-filter");
+            NodeVisitor action = intentFilter.child(null, "action");
 
-        List<AttributeItem> list = new ArrayList<>();
-        list.add(new AttributeItem("name", provider.getFilterNameValue()));
-        new ModifyAttributeVisitor(action, list,true);
-    }
-
-    private static List<AttributeItem> convertToAttr(ModificationProperty.Provider provider) {
-        if (provider == null) {
-            return null;
+            List<AttributeItem> list = new ArrayList<>();
+            list.add(new AttributeItem("name", filterAction));
+            new ModifyAttributeVisitor(action, list, true);
         }
-        ArrayList<AttributeItem> list = new ArrayList<>();
-        for (String keys : provider.getNameValue().keySet()){
-           list.add(new AttributeItem(keys, provider.getNameValue().get(keys)));
-        }
-        return list;
     }
 }

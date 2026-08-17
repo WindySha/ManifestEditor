@@ -1,7 +1,6 @@
 package com.wind.meditor.property;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -43,8 +42,8 @@ public class ModificationProperty {
         return this;
     }
 
-    public ModificationProperty addProvider(HashMap<String,String> nameValue,String filterNameValue){
-        providerList.add(new Provider(nameValue,filterNameValue));
+    public ModificationProperty addProvider(List<AttributeItem> attributes, String filterAction){
+        providerList.add(new Provider(attributes, filterAction));
         return this;
     }
 
@@ -146,18 +145,27 @@ public class ModificationProperty {
         }
     }
 
+    /**
+     * A {@code <provider>} to add, carried as typed {@link AttributeItem}s rather than string pairs.
+     *
+     * The type matters: {@code exported} and {@code grantUriPermissions} are read by the platform
+     * with {@code TypedArray.getBoolean}, which returns the default for any non-integer value -- so a
+     * boolean written as the string {@code "true"} is silently seen as false. Passing an
+     * {@link AttributeItem} whose value is a {@link Boolean} lets the visitor emit it as
+     * {@code TYPE_INT_BOOLEAN}, which the platform actually honours.
+     */
     public static class Provider{
-        private HashMap<String,String> nameValue;
-        private String filterNameValue;
-        public Provider(HashMap<String,String> nameValue,String filterNameValue){
-            this.nameValue = nameValue;
-            this.filterNameValue = filterNameValue;
+        private final List<AttributeItem> attributes;
+        private final String filterAction;
+        public Provider(List<AttributeItem> attributes, String filterAction){
+            this.attributes = attributes;
+            this.filterAction = filterAction;
         }
-        public HashMap<String,String> getNameValue(){
-            return nameValue;
+        public List<AttributeItem> getAttributes(){
+            return attributes;
         }
-        public String getFilterNameValue(){
-            return filterNameValue;
+        public String getFilterAction(){
+            return filterAction;
         }
     }
 
