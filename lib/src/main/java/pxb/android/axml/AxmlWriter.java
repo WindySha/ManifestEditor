@@ -215,7 +215,7 @@ public class AxmlWriter extends AxmlVisitor {
             // start tag
             out.putInt(RES_XML_START_ELEMENT_TYPE | (0x0010 << 16));
             out.putInt(36 + attrs.size() * 20);
-            out.putInt(line);
+            out.putInt(line > 0 ? line : 1);
             out.putInt(0xFFFFFFFF);
             out.putInt(ns != null ? this.ns.index : -1);
             out.putInt(name.index);
@@ -271,7 +271,7 @@ public class AxmlWriter extends AxmlVisitor {
             // end tag
             out.putInt(RES_XML_END_ELEMENT_TYPE | (0x0010 << 16));
             out.putInt(24);
-            out.putInt(-1);
+            out.putInt(line > 0 ? line : 1);
             out.putInt(0xFFFFFFFF);
             out.putInt(ns != null ? this.ns.index : -1);
             out.putInt(name.index);
@@ -392,7 +392,7 @@ public class AxmlWriter extends AxmlVisitor {
             stack.push(ns);
             out.putInt(RES_XML_START_NAMESPACE_TYPE | (0x0010 << 16));
             out.putInt(24);
-            out.putInt(-1);
+            out.putInt(1);
             out.putInt(0xFFFFFFFF);
             out.putInt(ns.prefix.index);
             out.putInt(ns.uri.index);
@@ -406,7 +406,7 @@ public class AxmlWriter extends AxmlVisitor {
             Ns ns = stack.pop();
             out.putInt(RES_XML_END_NAMESPACE_TYPE | (0x0010 << 16));
             out.putInt(24);
-            out.putInt(ns.ln);
+            out.putInt(ns.ln > 0 ? ns.ln : 1);
             out.putInt(0xFFFFFFFF);
             out.putInt(ns.prefix.index);
             out.putInt(ns.uri.index);
