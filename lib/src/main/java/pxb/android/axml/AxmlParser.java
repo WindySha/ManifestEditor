@@ -165,11 +165,16 @@ public class AxmlParser implements ResConst {
 
     public int next() throws IOException {
         if (fileSize < 0) {
-            int type = in.getInt() & 0xFFFF;
+            int first = in.getInt();
+            int type = first & 0xFFFF;
+            int headerSize = (first >>> 16) & 0xFFFF;
             if (type != RES_XML_TYPE) {
                 throw new RuntimeException();
             }
             fileSize = in.getInt();
+            if (headerSize > 8) {
+                ((Buffer) in).position(headerSize);
+            }
             return START_FILE;
         }
         int event = -1;
